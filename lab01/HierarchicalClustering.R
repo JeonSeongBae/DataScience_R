@@ -19,3 +19,9 @@ str(as.dendrogram(hr))
 
 # Prints the row labels in the order they appear in the tree
 hr$labels[hr$order]
+
+# Find the clusters
+mycl <- cutree(hr, h = max(hr$height) / 2)
+mycl[hr$labels[hr$order]]
+plot(hr)
+rect.hclust(hr, k = 5, border = "red")
