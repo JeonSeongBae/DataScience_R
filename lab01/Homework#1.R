@@ -9,7 +9,7 @@ n <- matrix(rnorm(n, -2, 1), size, size, dimnames=list(paste("row", 1:size, sep 
 
 mn <- rbind(m,n)
 
-par(mfrow = c(1, 4))
+par(mfrow = c(1, 1))
 
 plot(mn, xlab = "", ylab = "", xlim = c(-8,8), ylim = c(-8,8), cex = 1)
 points(m, col = "Red")
