@@ -4,25 +4,29 @@
 
 rawdata = read.csv("./lab02/toyota.csv") # 워킹 디렉토리 설정 및 데이터 로드
 
-colnames(rawdata) = c("gender", "length", "diameter", "height", "whole_weight", "shell_weight", "ring") # Column 이름 부여
+colnames(rawdata) = c("Id", "Model", "Price", "Age_08_04", "KM", "Fuel_Type", "HP", "Color") # Column 이름 부여
 
-unique_gender = unique(rawdata$gender) # Categorical 변수 처리를 위한 unique elements 조사
+rawdata <- rawdata[, c("Id", "Price", "Age_08_04", "KM", "HP", "Fuel_Type")]
 
-gender_dummy = as.data.frame(matrix(0, nrow(rawdata), length(unique_gender)-1)) # 1-of-C coding을 위한 dummy variables 생성
+unique_toyota = unique(rawdata$Fuel_Type) # Categorical 변수 처리를 위한 unique elements 조사
 
-for (i in 1:(length(unique_gender)-1)) {
-  tmp = unique_gender[i]
+toyota_dummy = as.data.frame(matrix(0, nrow(rawdata), length(unique_toyota)-1)) # 1-of-C coding을 위한 dummy variables 생성
+
+for (i in 1:(length(unique_toyota)-1)){
+  tmp = unique_toyota[i]
   
-  tmp_idx = which(rawdata$gender == tmp)
+  tmp_idx = which(rawdata$Fuel_Type == tmp)
   
-  gender_dummy[tmp_idx, i ] = 1
+  toyota_dummy[tmp_idx, i ] = 1
   
-  colnames(gender_dummy)[i] = sprintf("gender_%s", tmp) # Dummy variables의 column 이름 부여
+  colnames(toyota_dummy)[i] = sprintf("Fuel_Type_%s", tmp) # Dummy variables의 column 이름 부여
   
 }
 
 prdata = rawdata[, -1]
-prdata = cbind(gender_dummy, prdata) # Categorical variable을 dummy variable로 교체
+prdata = cbind(toyota_dummy, prdata) # Categorical variable을 dummy variable로 교체
+# prdata = prdata[,!(names(prdata) %in% c("Color","Model"))]
+
 
 # Linear regression & stepwise linear regression 학습
 
@@ -35,14 +39,15 @@ trn_data = prdata[trn_idx,]
 tst_data = prdata[tst_idx,]
 
 # Linear regression
-fit_lr = lm(ring ~., data = trn_data) # Linear regression 학습
+fit_lr = lm(formula = Price ~., data = trn_data) # Linear regression 학습
 fit_lr
 summary(fit_lr)
 pred_lr = predict(fit_lr, tst_data) # Linear regression 테스트
 
-plot(tst_data$ring, pred_lr)
+par(mfrow=c(1,2))
+plot(tst_data$Price, pred_lr)
 
-mse_lr = mean((tst_data$ring-pred_lr)^2) # MSE 계산
+mse_lr = mean((tst_data$Price-pred_lr)^2) # MSE 계산
 
 # Stepwise
 
@@ -51,4 +56,6 @@ summary(step_lr)
 
 pred_step = predict(step_lr, tst_data) # Stepwise linear regrssion 테스트
 
-mse_step = mean((tst_data$ring-pred_step)^2) # MSE 계산
+mse_step = mean((tst_data$Price-pred_step)^2) # MSE 계산
+
+plot(tst_data$Price, pred_step)
