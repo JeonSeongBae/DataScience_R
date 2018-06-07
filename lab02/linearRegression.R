@@ -1,6 +1,6 @@
-# rm(list=ls()) # 워크 스페이스 클리어
+rm(list=ls()) # 워크 스페이스 클리어
 
-# setwd(C:\Users\tjdqo_000\DataScience_R)
+setwd('C:/Users/tjdqo_000/DataScience_R')
 
 rawdata = read.csv("./lab02/toyota.csv") # 워킹 디렉토리 설정 및 데이터 로드
 
@@ -25,7 +25,7 @@ for (i in 1:(length(unique_toyota)-1)){
 
 prdata = rawdata[, -1]
 prdata = cbind(toyota_dummy, prdata) # Categorical variable을 dummy variable로 교체
-# prdata = prdata[,!(names(prdata) %in% c("Color","Model"))]
+prdata = prdata[,!(names(prdata) %in% c("Color","Model"))]
 
 
 # Linear regression & stepwise linear regression 학습
